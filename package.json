@@ -5,7 +5,10 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "create-vets": "node scripts/createVeterinarians.js",
+    "cleanup-appointments": "node scripts/cleanupAppointments.js",
+    "setup-db": "npm run create-vets && npm run cleanup-appointments"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
