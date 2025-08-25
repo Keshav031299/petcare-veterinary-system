@@ -74,6 +74,7 @@ const petRoutes = require('./routes/pets');
 const appointmentRoutes = require('./routes/appointments');
 const ownerRoutes = require('./routes/owners');
 const apiRoutes = require('./routes/api'); // ADD THIS - New API routes
+const cartRoutes = require('./routes/cart'); // ADD THIS - Shopping Cart routes
 
 // Public routes (no authentication required)
 app.use('/auth', authRoutes);
@@ -96,6 +97,7 @@ app.use('/products', requireAuth, productRoutes);
 app.use('/pets', requireAuth, petRoutes);
 app.use('/appointments', requireAuth, appointmentRoutes);
 app.use('/owners', requireAuth, ownerRoutes);
+app.use('/cart', requireAuth, cartRoutes); // ADD THIS - Cart routes
 
 // Error handling middleware
 app.use((err, req, res, next) => {

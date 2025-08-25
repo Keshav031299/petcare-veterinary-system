@@ -39,6 +39,33 @@
             padding: 0.25rem 0.5rem;
             border-radius: 10px;
         }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .cart-link {
+            position: relative;
+            display: inline-block;
+        }
+        .currency-indicator {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -75,6 +102,23 @@
                     </li>
                 </ul>
                 
+                <!-- Currency Indicator -->
+                <div class="me-3">
+                    <span class="currency-indicator">
+                        <i class="fas fa-coins me-1"></i>MUR
+                    </span>
+                </div>
+
+                <!-- Cart Link -->
+                <% if (isAuthenticated && currentUser) { %>
+                <div class="me-3">
+                    <a href="/cart" class="cart-link nav-link">
+                        <i class="fas fa-shopping-cart fa-lg text-primary"></i>
+                        <span class="cart-badge" id="cartBadge" style="display: none;">0</span>
+                    </a>
+                </div>
+                <% } %>
+                
                 <!-- User Info & Logout -->
                 <% if (isAuthenticated && currentUser) { %>
                 <ul class="navbar-nav">
@@ -87,6 +131,9 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             <li><a class="dropdown-item" href="/auth/profile">
                                 <i class="fas fa-user me-2"></i>Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="/cart">
+                                <i class="fas fa-shopping-cart me-2"></i>My Cart
                             </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
@@ -122,3 +169,35 @@
             </div>
         </div>
     <% } %>
+
+    <script>
+    // Load cart count on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        <% if (isAuthenticated && currentUser) { %>
+        loadCartCount();
+        <% } %>
+    });
+
+    // Function to load cart count
+    function loadCartCount() {
+        fetch('/cart/count')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateCartBadge(data.count);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading cart count:', error);
+            });
+    }
+
+    // Function to update cart badge
+    function updateCartBadge(count) {
+        const badge = document.getElementById('cartBadge');
+        if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    }
+    </script>

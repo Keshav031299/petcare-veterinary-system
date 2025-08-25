@@ -8,6 +8,7 @@
                 <div class="col-lg-6">
                     <h1 class="hero-title">🛍️ Pet Products & Supplies</h1>
                     <p class="hero-subtitle">Everything your furry, feathered, and scaled friends need to live their best lives</p>
+                    <p class="currency-note"><i class="fas fa-info-circle me-2"></i>All prices in Mauritian Rupees (MUR)</p>
                 </div>
                 <div class="col-lg-6">
                     <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
@@ -66,9 +67,9 @@
                                     <% } %>
                                 </div>
                                 <div class="product-price">
-                                    <span class="current-price">$<%= product.price.toFixed(2) %></span>
+                                    <span class="current-price">Rs <%= product.price.toFixed(2) %></span>
                                     <% if (product.originalPrice && product.originalPrice > product.price) { %>
-                                        <span class="original-price">$<%= product.originalPrice.toFixed(2) %></span>
+                                        <span class="original-price">Rs <%= product.originalPrice.toFixed(2) %></span>
                                         <span class="discount">-<%= Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) %>%</span>
                                     <% } %>
                                 </div>
@@ -128,12 +129,12 @@
 
                             <!-- Price Range -->
                             <div class="col-lg-2 col-md-6">
-                                <label for="minPrice" class="form-label">💰 Price Range</label>
+                                <label for="minPrice" class="form-label">💰 Price Range (Rs)</label>
                                 <div class="input-group">
                                     <input type="number" class="form-control" id="minPrice" name="minPrice" 
-                                           placeholder="Min" value="<%= filters.minPrice || '' %>">
+                                           placeholder="Min Rs" value="<%= filters.minPrice || '' %>">
                                     <input type="number" class="form-control" id="maxPrice" name="maxPrice" 
-                                           placeholder="Max" value="<%= filters.maxPrice || '' %>">
+                                           placeholder="Max Rs" value="<%= filters.maxPrice || '' %>">
                                 </div>
                             </div>
 
@@ -274,9 +275,9 @@
                                 
                                 <!-- Price -->
                                 <div class="product-price mb-3">
-                                    <span class="current-price">$<%= product.price.toFixed(2) %></span>
+                                    <span class="current-price">Rs <%= product.price.toFixed(2) %></span>
                                     <% if (product.originalPrice && product.originalPrice > product.price) { %>
-                                        <span class="original-price">$<%= product.originalPrice.toFixed(2) %></span>
+                                        <span class="original-price">Rs <%= product.originalPrice.toFixed(2) %></span>
                                     <% } %>
                                 </div>
 
@@ -293,10 +294,41 @@
                                         <i class="fas fa-circle me-1"></i><%= stockStatus %>
                                     </small>
                                 </div>
+
+                                <!-- Quantity Controls and Add to Cart -->
+                                <% if (product.inStock && product.stock > 0) { %>
+                                <div class="cart-controls mb-3">
+                                    <div class="quantity-controls">
+                                        <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                                onclick="updateQuantity('<%= product._id %>', -1)">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" class="form-control quantity-input" 
+                                               id="qty-<%= product._id %>" value="1" min="1" max="<%= product.stock %>">
+                                        <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                                onclick="updateQuantity('<%= product._id %>', 1)">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <% } %>
                                 
                                 <!-- Actions -->
                                 <div class="product-actions d-grid gap-2">
-                                    <a href="/products/<%= product._id %>" class="btn btn-primary btn-sm">
+                                    <% if (product.inStock && product.stock > 0) { %>
+                                        <button class="btn btn-success btn-sm add-to-cart" 
+                                                data-product-id="<%= product._id %>"
+                                                data-product-name="<%= product.name %>"
+                                                data-product-price="<%= product.price %>">
+                                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                                        </button>
+                                    <% } else { %>
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            <i class="fas fa-times me-1"></i>Out of Stock
+                                        </button>
+                                    <% } %>
+                                    
+                                    <a href="/products/<%= product._id %>" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-eye me-1"></i>View Details
                                     </a>
 
@@ -334,8 +366,78 @@
     </div>
 </div>
 
+<!-- Cart Notification Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-check-circle text-success me-2"></i>Added to Cart
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p id="cart-message">Product added successfully!</p>
+                <div class="d-grid gap-2">
+                    <a href="/cart" class="btn btn-primary">
+                        <i class="fas fa-shopping-cart me-2"></i>View Cart
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
-/* Products Page Styles */
+/* Existing styles... */
+.currency-note {
+    background: rgba(255,255,255,0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.cart-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 140px;
+}
+
+.quantity-input {
+    width: 60px;
+    text-align: center;
+    padding: 0.25rem;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-to-cart {
+    transition: all 0.3s ease;
+}
+
+.add-to-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* Other existing styles remain the same... */
 .products-hero {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     color: white;
@@ -372,7 +474,6 @@
     font-size: 1.1rem;
 }
 
-/* Filter Card */
 .filters-card {
     background: white;
     padding: 2rem;
@@ -386,7 +487,6 @@
     border-top: 1px solid #e9ecef;
 }
 
-/* Product Cards */
 .product-card {
     background: white;
     border-radius: 15px;
@@ -536,14 +636,12 @@
     margin-top: auto;
 }
 
-/* No Products State */
 .no-products {
     background: white;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .hero-title {
         font-size: 2rem;
@@ -564,26 +662,101 @@
 </style>
 
 <script>
-// Auto-submit form when filters change
+// Quantity controls
+function updateQuantity(productId, change) {
+    const qtyInput = document.getElementById(`qty-${productId}`);
+    let currentQty = parseInt(qtyInput.value) || 1;
+    let newQty = currentQty + change;
+    
+    // Ensure quantity stays within bounds
+    const min = parseInt(qtyInput.getAttribute('min')) || 1;
+    const max = parseInt(qtyInput.getAttribute('max')) || 999;
+    
+    if (newQty < min) newQty = min;
+    if (newQty > max) newQty = max;
+    
+    qtyInput.value = newQty;
+}
+
+// Add to cart functionality
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle add to cart buttons
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.dataset.productId;
+            const productName = this.dataset.productName;
+            const productPrice = this.dataset.productPrice;
+            const qtyInput = document.getElementById(`qty-${productId}`);
+            const quantity = parseInt(qtyInput.value) || 1;
+            
+            // Disable button temporarily
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding...';
+            
+            // Send AJAX request to add to cart
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update cart badge if it exists
+                    updateCartBadge(data.cart.totalItems);
+                    
+                    // Show success modal
+                    document.getElementById('cart-message').textContent = 
+                        `${productName} (Qty: ${quantity}) added to cart for Rs ${(productPrice * quantity).toFixed(2)}`;
+                    const modal = new bootstrap.Modal(document.getElementById('cartModal'));
+                    modal.show();
+                } else {
+                    alert(data.message || 'Error adding to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding to cart');
+            })
+            .finally(() => {
+                // Re-enable button
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-cart-plus me-1"></i>Add to Cart';
+            });
+        });
+    });
+    
+    // Auto-submit form when filters change
     const form = document.getElementById('filtersForm');
     const selects = form.querySelectorAll('select');
     const checkboxes = form.querySelectorAll('input[type="checkbox"]');
     
-    // Auto-submit on select change
     selects.forEach(select => {
         select.addEventListener('change', () => {
             form.submit();
         });
     });
     
-    // Auto-submit on checkbox change
     checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             form.submit();
         });
     });
 });
+
+// Update cart badge in navbar
+function updateCartBadge(count) {
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline' : 'none';
+    }
+}
 </script>
 
 <%- include('../partials/footer') %>

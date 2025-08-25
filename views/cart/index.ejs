@@ -1,0 +1,472 @@
+<%- include('../partials/header', { title: 'Shopping Cart' }) %>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</h1>
+                <a href="/products" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <% if (cart.items && cart.items.length > 0) { %>
+    <div class="row">
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+            <div class="card cart-items-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cart Items (<%= cart.totalItems %>)</h5>
+                    <form method="POST" action="/cart/clear" onsubmit="return confirm('Clear entire cart?')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-trash me-1"></i>Clear Cart
+                        </button>
+                    </form>
+                </div>
+                <div class="card-body p-0">
+                    <% cart.items.forEach(item => { %>
+                    <div class="cart-item" data-product-id="<%= item.product._id %>">
+                        <div class="row align-items-center p-3 border-bottom">
+                            <!-- Product Image -->
+                            <div class="col-md-2">
+                                <% if (item.product.images && item.product.images.length > 0) { %>
+                                    <img src="<%= item.product.images[0].url %>" 
+                                         alt="<%= item.product.name %>" class="cart-item-image">
+                                <% } else { %>
+                                    <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" 
+                                         alt="<%= item.product.name %>" class="cart-item-image">
+                                <% } %>
+                            </div>
+                            
+                            <!-- Product Details -->
+                            <div class="col-md-4">
+                                <h6 class="cart-item-title">
+                                    <a href="/products/<%= item.product._id %>" class="text-decoration-none">
+                                        <%= item.product.name %>
+                                    </a>
+                                </h6>
+                                <p class="text-muted mb-1">by <%= item.product.brand %></p>
+                                <small class="text-muted"><%= item.product.category %></small>
+                                
+                                <!-- Product badges -->
+                                <div class="cart-item-badges mt-2">
+                                    <% if (item.product.veterinarianRecommended) { %>
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-user-md me-1"></i>Vet Recommended
+                                        </span>
+                                    <% } %>
+                                    <% if (item.product.isOnSale) { %>
+                                        <span class="badge bg-danger">Sale</span>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <!-- Quantity Controls -->
+                            <div class="col-md-3">
+                                <div class="quantity-controls-cart">
+                                    <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                            onclick="updateCartQuantity('<%= item.product._id %>', -1)">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <input type="number" class="form-control quantity-input-cart" 
+                                           id="cart-qty-<%= item.product._id %>" 
+                                           value="<%= item.quantity %>" 
+                                           min="1" 
+                                           max="<%= item.product.stock %>"
+                                           onchange="updateCartQuantity('<%= item.product._id %>', 0, this.value)">
+                                    <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                            onclick="updateCartQuantity('<%= item.product._id %>', 1)">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted d-block text-center mt-1">
+                                    Max: <%= item.product.stock %>
+                                </small>
+                            </div>
+                            
+                            <!-- Price and Remove -->
+                            <div class="col-md-3 text-end">
+                                <div class="cart-item-price mb-2">
+                                    <div class="item-total">Rs <%= (item.price * item.quantity).toFixed(2) %></div>
+                                    <small class="text-muted">Rs <%= item.price.toFixed(2) %> each</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger remove-item" 
+                                        onclick="removeFromCart('<%= item.product._id %>', '<%= item.product.name %>')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cart Summary -->
+        <div class="col-lg-4">
+            <div class="card cart-summary-card sticky-top">
+                <div class="card-header">
+                    <h5 class="mb-0">Order Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="summary-row">
+                        <span>Items (<%= cart.totalItems %>)</span>
+                        <span>Rs <%= cart.totalPrice.toFixed(2) %></span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="text-success">Free</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="summary-row total-row">
+                        <strong>Total</strong>
+                        <strong class="text-primary">Rs <%= cart.totalPrice.toFixed(2) %></strong>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <button class="btn btn-success btn-lg checkout-btn">
+                            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="requestQuote()">
+                            <i class="fas fa-file-alt me-2"></i>Request Quote
+                        </button>
+                    </div>
+                    
+                    <!-- Savings Info -->
+                    <% 
+                    let totalSavings = 0;
+                    cart.items.forEach(item => {
+                        if (item.product.originalPrice && item.product.originalPrice > item.product.price) {
+                            totalSavings += (item.product.originalPrice - item.product.price) * item.quantity;
+                        }
+                    });
+                    %>
+                    <% if (totalSavings > 0) { %>
+                    <div class="savings-info mt-3">
+                        <div class="alert alert-success">
+                            <i class="fas fa-tag me-2"></i>
+                            <strong>You're saving Rs <%= totalSavings.toFixed(2) %>!</strong>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Recommended Products -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Customers Also Bought</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="recommended-item">
+                                <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
+                                     alt="Recommended product" class="recommended-image">
+                                <div class="recommended-info">
+                                    <small class="recommended-name">Premium Dog Food</small>
+                                    <div class="recommended-price">Rs 450.00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="recommended-item">
+                                <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80" 
+                                     alt="Recommended product" class="recommended-image">
+                                <div class="recommended-info">
+                                    <small class="recommended-name">Cat Treats</small>
+                                    <div class="recommended-price">Rs 125.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } else { %>
+    <!-- Empty Cart -->
+    <div class="row">
+        <div class="col-12">
+            <div class="empty-cart text-center py-5">
+                <i class="fas fa-shopping-cart fa-4x text-muted mb-4"></i>
+                <h3 class="text-muted mb-3">Your cart is empty</h3>
+                <p class="text-muted mb-4">Looks like you haven't added anything to your cart yet.</p>
+                <a href="/products" class="btn btn-primary btn-lg">
+                    <i class="fas fa-shopping-bag me-2"></i>Start Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<style>
+.cart-items-card, .cart-summary-card {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 15px;
+}
+
+.cart-item {
+    transition: background-color 0.3s ease;
+}
+
+.cart-item:hover {
+    background-color: #f8f9fa;
+}
+
+.cart-item-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.cart-item-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.cart-item-title a:hover {
+    color: #667eea;
+}
+
+.cart-item-badges .badge {
+    font-size: 0.7rem;
+    margin-right: 0.25rem;
+}
+
+.quantity-controls-cart {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.quantity-input-cart {
+    width: 60px;
+    text-align: center;
+    padding: 0.25rem;
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-item-price .item-total {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.remove-item {
+    transition: all 0.3s ease;
+}
+
+.remove-item:hover {
+    transform: scale(1.1);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: between;
+    margin-bottom: 0.5rem;
+}
+
+.total-row {
+    font-size: 1.1rem;
+    border-top: 2px solid #dee2e6;
+    padding-top: 0.5rem;
+}
+
+.checkout-btn {
+    transition: all 0.3s ease;
+}
+
+.checkout-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
+}
+
+.savings-info .alert {
+    margin-bottom: 0;
+}
+
+.recommended-item {
+    text-align: center;
+    padding: 0.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.recommended-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.recommended-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.recommended-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.recommended-price {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #28a745;
+}
+
+.empty-cart {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.sticky-top {
+    top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cart-item .row > div {
+        margin-bottom: 1rem;
+    }
+    
+    .cart-item-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .quantity-controls-cart {
+        justify-content: flex-start;
+    }
+    
+    .sticky-top {
+        position: relative !important;
+        top: auto !important;
+    }
+}
+</style>
+
+<script>
+// Update cart quantity
+function updateCartQuantity(productId, change, newValue = null) {
+    const qtyInput = document.getElementById(`cart-qty-${productId}`);
+    let quantity;
+    
+    if (newValue !== null) {
+        quantity = parseInt(newValue);
+    } else {
+        let currentQty = parseInt(qtyInput.value) || 1;
+        quantity = currentQty + change;
+    }
+    
+    // Ensure quantity stays within bounds
+    const min = parseInt(qtyInput.getAttribute('min')) || 1;
+    const max = parseInt(qtyInput.getAttribute('max')) || 999;
+    
+    if (quantity < min) quantity = min;
+    if (quantity > max) quantity = max;
+    
+    // Update input value
+    qtyInput.value = quantity;
+    
+    // Send update to server
+    fetch('/cart/update', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: productId,
+            quantity: quantity
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload page to reflect changes
+            location.reload();
+        } else {
+            alert(data.message || 'Error updating cart');
+            // Revert input value on error
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating cart');
+        location.reload();
+    });
+}
+
+// Remove item from cart
+function removeFromCart(productId, productName) {
+    if (!confirm(`Remove ${productName} from cart?`)) {
+        return;
+    }
+    
+    fetch(`/cart/remove/${productId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove item from DOM or reload page
+            location.reload();
+        } else {
+            alert(data.message || 'Error removing item');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error removing item');
+    });
+}
+
+// Request quote functionality
+function requestQuote() {
+    if (confirm('Request a quote for these items? This will help our staff provide you with the best pricing and recommendations.')) {
+        // Redirect to appointment booking with quote request
+        window.location.href = '/appointments/new?type=quote';
+    }
+}
+
+// Checkout functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const checkoutBtn = document.querySelector('.checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', function() {
+            // For now, show coming soon message
+            alert('Checkout functionality coming soon! Please visit our clinic or call to place your order.');
+        });
+    }
+});
+</script>
+
+<%- include('../partials/footer') %> 

@@ -1,3 +1,4 @@
+// models/Product.js - Updated with MUR currency
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
@@ -129,15 +130,15 @@ productSchema.index({ name: 'text', description: 'text', brand: 'text' });
 productSchema.index({ price: 1 });
 productSchema.index({ rating: -1 });
 
-// Virtual for formatted price
+// Virtual for formatted price in MUR
 productSchema.virtual('formattedPrice').get(function() {
-    return `$${this.price.toFixed(2)}`;
+    return `Rs ${this.price.toFixed(2)}`;
 });
 
-// Virtual for formatted original price
+// Virtual for formatted original price in MUR
 productSchema.virtual('formattedOriginalPrice').get(function() {
     if (this.originalPrice) {
-        return `$${this.originalPrice.toFixed(2)}`;
+        return `Rs ${this.originalPrice.toFixed(2)}`;
     }
     return null;
 });
@@ -170,4 +171,4 @@ productSchema.virtual('starRating').get(function() {
     };
 });
 
-module.exports = mongoose.model('Product', productSchema); 
+module.exports = mongoose.model('Product', productSchema);
