@@ -1,0 +1,158 @@
+<%- include('../partials/header') %>
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-user me-2"></i><%= owner.firstName %> <%= owner.lastName %></h1>
+        <div class="btn-group">
+            <a href="/owners" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Owners
+            </a>
+            <a href="/owners/<%= owner._id %>/edit" class="btn btn-warning">
+                <i class="fas fa-edit me-2"></i>Edit
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Owner Information -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Contact Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Name:</strong></td>
+                            <td><%= owner.firstName %> <%= owner.lastName %></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email:</strong></td>
+                            <td><a href="mailto:<%= owner.email %>"><%= owner.email %></a></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phone:</strong></td>
+                            <td><a href="tel:<%= owner.phone %>"><%= owner.phone %></a></td>
+                        </tr>
+                        <% if (owner.address && owner.address.street) { %>
+                        <tr>
+                            <td><strong>Address:</strong></td>
+                            <td>
+                                <%= owner.address.street %><br>
+                                <% if (owner.address.city) { %>
+                                    <%= owner.address.city %><% if (owner.address.state) { %>, <%= owner.address.state %><% } %>
+                                    <% if (owner.address.zipCode) { %> <%= owner.address.zipCode %><% } %>
+                                <% } %>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Contact -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-phone me-2"></i>Emergency Contact
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <% if (owner.emergencyContact && owner.emergencyContact.name) { %>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Name:</strong></td>
+                                <td><%= owner.emergencyContact.name %></td>
+                            </tr>
+                            <% if (owner.emergencyContact.phone) { %>
+                            <tr>
+                                <td><strong>Phone:</strong></td>
+                                <td><a href="tel:<%= owner.emergencyContact.phone %>"><%= owner.emergencyContact.phone %></a></td>
+                            </tr>
+                            <% } %>
+                            <% if (owner.emergencyContact.relationship) { %>
+                            <tr>
+                                <td><strong>Relationship:</strong></td>
+                                <td><%= owner.emergencyContact.relationship %></td>
+                            </tr>
+                            <% } %>
+                        </table>
+                    <% } else { %>
+                        <div class="text-center py-4">
+                            <i class="fas fa-phone-slash fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No emergency contact information</p>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Owner's Pets -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-paw me-2"></i>Pets (<%= pets.length %>)
+                    </h5>
+                    <a href="/pets/new" class="btn btn-sm btn-success">
+                        <i class="fas fa-plus me-1"></i>Add New Pet
+                    </a>
+                </div>
+                <div class="card-body">
+                    <% if (pets.length > 0) { %>
+                        <div class="row">
+                            <% pets.forEach(pet => { %>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">
+                                                <%= pet.name %>
+                                                <% if (pet.species === 'Dog') { %>
+                                                    <i class="fas fa-dog text-primary ms-2"></i>
+                                                <% } else if (pet.species === 'Cat') { %>
+                                                    <i class="fas fa-cat text-warning ms-2"></i>
+                                                <% } else { %>
+                                                    <i class="fas fa-paw text-success ms-2"></i>
+                                                <% } %>
+                                            </h6>
+                                            <p class="card-text small text-muted">
+                                                <%= pet.species %> • <%= pet.breed %><br>
+                                                <%= pet.age %> years • 
+                                                <% if (pet.gender === 'Male') { %>
+                                                    <i class="fas fa-mars text-primary"></i>
+                                                <% } else { %>
+                                                    <i class="fas fa-venus text-danger"></i>
+                                                <% } %>
+                                                <%= pet.gender %>
+                                            </p>
+                                            <a href="/pets/<%= pet._id %>" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye me-1"></i>View Details
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <div class="text-center py-4">
+                            <i class="fas fa-paw fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No pets registered</h5>
+                            <p class="text-muted">Add the first pet for <%= owner.firstName %></p>
+                            <a href="/pets/new" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Add First Pet
+                            </a>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %> 

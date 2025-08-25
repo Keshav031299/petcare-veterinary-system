@@ -1,0 +1,99 @@
+<%- include('../partials/header') %>
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-user-plus me-2"></i>Add New Owner</h1>
+        <a href="/owners" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Owners
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST" action="/owners">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" 
+                                       value="<%= owner.firstName || '' %>" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" 
+                                       value="<%= owner.lastName || '' %>" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="<%= owner.email || '' %>" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone *</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="<%= owner.phone || '' %>" required>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">Address Information</h5>
+                        <div class="mb-3">
+                            <label for="street" class="form-label">Street Address</label>
+                            <input type="text" class="form-control" id="street" name="street" 
+                                   value="<%= (owner.address && owner.address.street) || '' %>">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" class="form-control" id="city" name="city" 
+                                       value="<%= (owner.address && owner.address.city) || '' %>">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" id="state" name="state" 
+                                       value="<%= (owner.address && owner.address.state) || '' %>">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="zipCode" class="form-label">ZIP Code</label>
+                                <input type="text" class="form-control" id="zipCode" name="zipCode" 
+                                       value="<%= (owner.address && owner.address.zipCode) || '' %>">
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3">Emergency Contact</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="emergencyName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="emergencyName" name="emergencyName" 
+                                       value="<%= (owner.emergencyContact && owner.emergencyContact.name) || '' %>">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="emergencyPhone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="emergencyPhone" name="emergencyPhone" 
+                                       value="<%= (owner.emergencyContact && owner.emergencyContact.phone) || '' %>">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="emergencyRelationship" class="form-label">Relationship</label>
+                                <input type="text" class="form-control" id="emergencyRelationship" name="emergencyRelationship" 
+                                       value="<%= (owner.emergencyContact && owner.emergencyContact.relationship) || '' %>">
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <a href="/owners" class="btn btn-secondary me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Owner
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %> 

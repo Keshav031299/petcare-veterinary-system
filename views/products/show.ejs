@@ -1,0 +1,650 @@
+<%- include('../partials/header', { title: title }) %>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-lg-6">
+            <div class="product-gallery">
+                <div class="main-image">
+                    <% if (product.images && product.images.length > 0) { %>
+                        <img src="<%= product.images[0].url %>" alt="<%= product.images[0].alt %>" 
+                             class="img-fluid main-product-img">
+                    <% } else { %>
+                        <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                             alt="<%= product.name %>" class="img-fluid main-product-img">
+                    <% } %>
+                    
+                    <!-- Product Badges -->
+                    <div class="product-badges-overlay">
+                        <% if (product.isOnSale) { %>
+                            <span class="badge bg-danger">Sale -<%= product.discountPercentage %>%</span>
+                        <% } %>
+                        <% if (product.isFeatured) { %>
+                            <span class="badge bg-warning">Featured</span>
+                        <% } %>
+                        <% if (product.veterinarianRecommended) { %>
+                            <span class="badge bg-success">
+                                <i class="fas fa-user-md me-1"></i>Vet Recommended
+                            </span>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-lg-6">
+            <div class="product-details">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/products">Products</a></li>
+                        <li class="breadcrumb-item"><%= product.category %></li>
+                        <li class="breadcrumb-item active"><%= product.name %></li>
+                    </ol>
+                </nav>
+
+                <!-- Product Title & Brand -->
+                <h1 class="product-title"><%= product.name %></h1>
+                <p class="product-brand">by <strong><%= product.brand %></strong></p>
+
+                <!-- Rating -->
+                <div class="product-rating mb-3">
+                    <% for (let i = 0; i < product.starRating.full; i++) { %>
+                        <i class="fas fa-star text-warning"></i>
+                    <% } %>
+                    <% if (product.starRating.half > 0) { %>
+                        <i class="fas fa-star-half-alt text-warning"></i>
+                    <% } %>
+                    <% for (let i = 0; i < product.starRating.empty; i++) { %>
+                        <i class="far fa-star text-warning"></i>
+                    <% } %>
+                    <span class="rating-text ms-2">
+                        <%= product.rating.toFixed(1) %> (<%= product.reviewCount %> reviews)
+                    </span>
+                </div>
+
+                <!-- Price -->
+                <div class="product-price mb-4">
+                    <span class="current-price"><%= product.formattedPrice %></span>
+                    <% if (product.originalPrice && product.originalPrice > product.price) { %>
+                        <span class="original-price ms-2"><%= product.formattedOriginalPrice %></span>
+                        <span class="savings ms-2 text-success">
+                            Save <%= product.formattedOriginalPrice.replace('$', '$') - product.formattedPrice.replace('$', '$') %>!
+                        </span>
+                    <% } %>
+                </div>
+
+                <!-- Stock Status -->
+                <div class="stock-info mb-4">
+                    <% let stockClass = 'text-success'; %>
+                    <% let stockIcon = 'fas fa-check-circle'; %>
+                    <% if (product.stock === 0) { %>
+                        <% stockClass = 'text-danger'; stockIcon = 'fas fa-times-circle'; %>
+                    <% } else if (product.stock < 5) { %>
+                        <% stockClass = 'text-warning'; stockIcon = 'fas fa-exclamation-circle'; %>
+                    <% } %>
+                    <h6 class="<%= stockClass %>">
+                        <i class="<%= stockIcon %> me-2"></i><%= product.stockStatus %>
+                        <% if (product.stock > 0 && product.stock < 10) { %>
+                            (<%= product.stock %> left)
+                        <% } %>
+                    </h6>
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-info-grid mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-tag text-primary me-2"></i>
+                                <strong>Category:</strong> <%= product.category %>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-paw text-primary me-2"></i>
+                                <strong>For:</strong> <%= product.availableFor.join(', ') %>
+                            </div>
+                        </div>
+                        <% if (product.size) { %>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-ruler text-primary me-2"></i>
+                                <strong>Size:</strong> <%= product.size %>
+                            </div>
+                        </div>
+                        <% } %>
+                        <% if (product.weight) { %>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-weight text-primary me-2"></i>
+                                <strong>Weight:</strong> <%= product.weight %>
+                            </div>
+                        </div>
+                        <% } %>
+                        <% if (product.ageGroup) { %>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <i class="fas fa-birthday-cake text-primary me-2"></i>
+                                <strong>Age Group:</strong> <%= product.ageGroup %>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="product-actions mb-4">
+                    <div class="d-grid gap-2 d-md-block">
+                        <% if (product.inStock) { %>
+                            <button class="btn btn-primary btn-lg me-md-2" onclick="addToWishlist()">
+                                <i class="fas fa-heart me-2"></i>Add to Wishlist
+                            </button>
+                            <button class="btn btn-success btn-lg" onclick="contactVet()">
+                                <i class="fas fa-comments me-2"></i>Ask Our Vet
+                            </button>
+                        <% } else { %>
+                            <button class="btn btn-secondary btn-lg" disabled>
+                                <i class="fas fa-times me-2"></i>Out of Stock
+                            </button>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Admin Actions -->
+                    <% if (currentUser && currentUser.role === 'admin') { %>
+                    <div class="admin-actions mt-3">
+                        <a href="/products/<%= product._id %>/edit" class="btn btn-outline-warning">
+                            <i class="fas fa-edit me-2"></i>Edit Product
+                        </a>
+                        <form method="POST" action="/products/<%= product._id %>?_method=DELETE" 
+                              style="display: inline;" onsubmit="return confirm('Are you sure?')">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-trash me-2"></i>Delete
+                            </button>
+                        </form>
+                    </div>
+                    <% } %>
+                </div>
+
+                <!-- Back Button -->
+                <div class="back-button">
+                    <a href="/products" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Details Tabs -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="product-tabs">
+                <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab" 
+                                data-bs-target="#description" type="button" role="tab">
+                            <i class="fas fa-info-circle me-2"></i>Description
+                        </button>
+                    </li>
+                    <% if (product.features && product.features.length > 0) { %>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="features-tab" data-bs-toggle="tab" 
+                                data-bs-target="#features" type="button" role="tab">
+                            <i class="fas fa-star me-2"></i>Features
+                        </button>
+                    </li>
+                    <% } %>
+                    <% if (product.ingredients && product.ingredients.length > 0) { %>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="ingredients-tab" data-bs-toggle="tab" 
+                                data-bs-target="#ingredients" type="button" role="tab">
+                            <i class="fas fa-leaf me-2"></i>Ingredients
+                        </button>
+                    </li>
+                    <% } %>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="specifications-tab" data-bs-toggle="tab" 
+                                data-bs-target="#specifications" type="button" role="tab">
+                            <i class="fas fa-cogs me-2"></i>Specifications
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-3" id="productTabsContent">
+                    <!-- Description -->
+                    <div class="tab-pane fade show active" id="description" role="tabpanel">
+                        <div class="tab-content-wrapper">
+                            <p class="lead"><%= product.description %></p>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <% if (product.features && product.features.length > 0) { %>
+                    <div class="tab-pane fade" id="features" role="tabpanel">
+                        <div class="tab-content-wrapper">
+                            <ul class="feature-list">
+                                <% product.features.forEach(feature => { %>
+                                    <li><i class="fas fa-check text-success me-2"></i><%= feature %></li>
+                                <% }); %>
+                            </ul>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Ingredients -->
+                    <% if (product.ingredients && product.ingredients.length > 0) { %>
+                    <div class="tab-pane fade" id="ingredients" role="tabpanel">
+                        <div class="tab-content-wrapper">
+                            <div class="ingredients-grid">
+                                <% product.ingredients.forEach(ingredient => { %>
+                                    <span class="ingredient-tag"><%= ingredient %></span>
+                                <% }); %>
+                            </div>
+                            
+                            <% if (product.nutritionalInfo && (product.nutritionalInfo.protein || product.nutritionalInfo.fat)) { %>
+                            <div class="nutritional-info mt-4">
+                                <h6>Nutritional Information:</h6>
+                                <div class="row">
+                                    <% if (product.nutritionalInfo.protein) { %>
+                                        <div class="col-md-3">
+                                            <strong>Protein:</strong> <%= product.nutritionalInfo.protein %>
+                                        </div>
+                                    <% } %>
+                                    <% if (product.nutritionalInfo.fat) { %>
+                                        <div class="col-md-3">
+                                            <strong>Fat:</strong> <%= product.nutritionalInfo.fat %>
+                                        </div>
+                                    <% } %>
+                                    <% if (product.nutritionalInfo.fiber) { %>
+                                        <div class="col-md-3">
+                                            <strong>Fiber:</strong> <%= product.nutritionalInfo.fiber %>
+                                        </div>
+                                    <% } %>
+                                    <% if (product.nutritionalInfo.moisture) { %>
+                                        <div class="col-md-3">
+                                            <strong>Moisture:</strong> <%= product.nutritionalInfo.moisture %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Specifications -->
+                    <div class="tab-pane fade" id="specifications" role="tabpanel">
+                        <div class="tab-content-wrapper">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Brand:</strong></td>
+                                            <td><%= product.brand %></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Category:</strong></td>
+                                            <td><%= product.category %></td>
+                                        </tr>
+                                        <% if (product.size) { %>
+                                        <tr>
+                                            <td><strong>Size:</strong></td>
+                                            <td><%= product.size %></td>
+                                        </tr>
+                                        <% } %>
+                                        <% if (product.weight) { %>
+                                        <tr>
+                                            <td><strong>Weight:</strong></td>
+                                            <td><%= product.weight %></td>
+                                        </tr>
+                                        <% } %>
+                                        <% if (product.ageGroup) { %>
+                                        <tr>
+                                            <td><strong>Age Group:</strong></td>
+                                            <td><%= product.ageGroup %></td>
+                                        </tr>
+                                        <% } %>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <% if (product.colors && product.colors.length > 0) { %>
+                                    <div class="mb-3">
+                                        <strong>Available Colors:</strong>
+                                        <div class="color-options mt-2">
+                                            <% product.colors.forEach(color => { %>
+                                                <span class="color-tag"><%= color %></span>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                                    
+                                    <% if (product.dimensions && (product.dimensions.length || product.dimensions.width || product.dimensions.height)) { %>
+                                    <div class="mb-3">
+                                        <strong>Dimensions:</strong>
+                                        <p>
+                                            <% if (product.dimensions.length) { %>L: <%= product.dimensions.length %><% } %>
+                                            <% if (product.dimensions.width) { %> × W: <%= product.dimensions.width %><% } %>
+                                            <% if (product.dimensions.height) { %> × H: <%= product.dimensions.height %><% } %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    <% if (relatedProducts.length > 0) { %>
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Related Products</h3>
+            <div class="row g-4">
+                <% relatedProducts.forEach(related => { %>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <% if (related.images && related.images.length > 0) { %>
+                                    <img src="<%= related.images[0].url %>" alt="<%= related.images[0].alt %>" class="card-img">
+                                <% } else { %>
+                                    <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                                         alt="<%= related.name %>" class="card-img">
+                                <% } %>
+                                <% if (related.isOnSale || related.isFeatured) { %>
+                                <div class="product-badges">
+                                    <% if (related.isOnSale) { %>
+                                        <span class="badge bg-danger">Sale</span>
+                                    <% } %>
+                                    <% if (related.isFeatured) { %>
+                                        <span class="badge bg-warning">Featured</span>
+                                    <% } %>
+                                </div>
+                                <% } %>
+                            </div>
+                            <div class="product-info">
+                                <h6 class="product-title">
+                                    <a href="/products/<%= related._id %>"><%= related.name %></a>
+                                </h6>
+                                <p class="product-brand">by <%= related.brand %></p>
+                                <div class="product-price">
+                                    <span class="current-price"><%= related.formattedPrice %></span>
+                                    <% if (related.originalPrice && related.originalPrice > related.price) { %>
+                                        <span class="original-price"><%= related.formattedOriginalPrice %></span>
+                                    <% } %>
+                                </div>
+                                <div class="product-actions d-grid">
+                                    <a href="/products/<%= related._id %>" class="btn btn-outline-primary btn-sm">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<style>
+/* Product Gallery */
+.main-image {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.main-product-img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.product-badges-overlay {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Product Details */
+.product-details {
+    padding: 2rem;
+}
+
+.product-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.product-brand {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.product-rating {
+    font-size: 1.1rem;
+}
+
+.rating-text {
+    color: #6c757d;
+}
+
+.product-price {
+    margin-bottom: 1.5rem;
+}
+
+.current-price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.original-price {
+    font-size: 1.5rem;
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.savings {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.info-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Product Tabs */
+.product-tabs {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 1rem 1.5rem;
+}
+
+.nav-tabs .nav-link.active {
+    color: #667eea;
+    border-bottom: 3px solid #667eea;
+    background: none;
+}
+
+.tab-content-wrapper {
+    padding: 2rem 0;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+}
+
+.feature-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.ingredients-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.ingredient-tag {
+    background: #e9ecef;
+    color: #495057;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.color-tag {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 0.25rem 0.5rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+}
+
+/* Related Products */
+.product-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.product-card .product-image {
+    height: 200px;
+    overflow: hidden;
+    position: relative;
+}
+
+.product-card .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-img {
+    transform: scale(1.05);
+}
+
+.product-card .product-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.product-card .product-info {
+    padding: 1rem;
+}
+
+.product-card .product-title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.product-card .product-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.product-card .product-title a:hover {
+    color: #667eea;
+}
+
+.product-card .product-brand {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.product-card .current-price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.product-card .original-price {
+    font-size: 0.9rem;
+    text-decoration: line-through;
+    color: #6c757d;
+    margin-left: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-title {
+        font-size: 2rem;
+    }
+    
+    .current-price {
+        font-size: 2rem;
+    }
+    
+    .original-price {
+        font-size: 1.2rem;
+    }
+    
+    .main-product-img {
+        height: 300px;
+    }
+    
+    .product-details {
+        padding: 1rem;
+    }
+    
+    .product-tabs {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+function addToWishlist() {
+    // Placeholder function for wishlist functionality
+    alert('Wishlist feature coming soon! This product has been noted.');
+}
+
+function contactVet() {
+    // Redirect to contact or appointment booking
+    if (confirm('Would you like to schedule a consultation with our veterinarian about this product?')) {
+        window.location.href = '/appointments/new';
+    }
+}
+</script>
+
+<%- include('../partials/footer') %> 

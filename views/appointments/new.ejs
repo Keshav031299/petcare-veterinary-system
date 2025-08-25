@@ -1,0 +1,184 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="fas fa-plus-circle me-2"></i>Schedule New Appointment</h2>
+                <a href="/appointments" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Appointments
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+        <div class="alert alert-danger">
+            <%= error %>
+        </div>
+    <% } %>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Appointment Details</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/appointments" method="POST">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Pet Owner *</label>
+                                <select class="form-select" name="petOwner" id="petOwner" required>
+                                    <option value="">Select Owner</option>
+                                    <% if (owners && owners.length > 0) { %>
+                                        <% owners.forEach(owner => { %>
+                                            <option value="<%= owner._id %>">
+                                                <%= owner.name || (owner.firstName + ' ' + owner.lastName) %> 
+                                                <%= owner.email ? '(' + owner.email + ')' : '' %>
+                                            </option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Pet *</label>
+                                <select class="form-select" name="pet" id="pet" required disabled>
+                                    <option value="">Select Owner First</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Date *</label>
+                                <input type="date" class="form-control" name="appointmentDate" required
+                                       min="<%= new Date().toISOString().split('T')[0] %>">
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Time *</label>
+                                <select class="form-select" name="appointmentTime" required>
+                                    <option value="">Select Time</option>
+                                    <option value="09:00">09:00 AM</option>
+                                    <option value="09:30">09:30 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="10:30">10:30 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="11:30">11:30 AM</option>
+                                    <option value="14:00">02:00 PM</option>
+                                    <option value="14:30">02:30 PM</option>
+                                    <option value="15:00">03:00 PM</option>
+                                    <option value="15:30">03:30 PM</option>
+                                    <option value="16:00">04:00 PM</option>
+                                    <option value="16:30">04:30 PM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Veterinarian *</label>
+                                <select class="form-select" name="veterinarian" required>
+                                    <option value="">Select Veterinarian</option>
+                                    <% if (veterinarians && veterinarians.length > 0) { %>
+                                        <% veterinarians.forEach(vet => { %>
+                                            <option value="<%= vet._id %>"><%= vet.name %></option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label">Reason for Visit *</label>
+                                <select class="form-select" name="reason" required>
+                                    <option value="">Select Reason</option>
+                                    <option value="checkup">Regular Checkup</option>
+                                    <option value="vaccination">Vaccination</option>
+                                    <option value="grooming">Grooming</option>
+                                    <option value="illness">Illness</option>
+                                    <option value="emergency">Emergency</option>
+                                    <option value="surgery">Surgery</option>
+                                    <option value="consultation">Consultation</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-control" name="notes" rows="3" 
+                                      placeholder="Any additional notes or special instructions"></textarea>
+                        </div>
+
+                        <div class="text-end">
+                            <a href="/appointments" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-check me-2"></i>Schedule Appointment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6><i class="fas fa-info-circle me-2"></i>Important Notes</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled small mb-0">
+                        <li><i class="fas fa-clock text-warning me-2"></i>Please arrive 10 minutes early</li>
+                        <li><i class="fas fa-ban text-danger me-2"></i>24-hour cancellation policy</li>
+                        <li><i class="fas fa-shield-alt text-info me-2"></i>Same slot cannot be double-booked</li>
+                        <li><i class="fas fa-phone text-success me-2"></i>Call if you need to reschedule</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load pets when owner is selected
+document.getElementById('petOwner').addEventListener('change', function() {
+    const ownerId = this.value;
+    const petSelect = document.getElementById('pet');
+    
+    if (!ownerId) {
+        petSelect.innerHTML = '<option value="">Select Owner First</option>';
+        petSelect.disabled = true;
+        return;
+    }
+    
+    // Simple AJAX call to get pets for owner
+    fetch(`/api/owners/${ownerId}/pets`)
+        .then(response => response.json())
+        .then(data => {
+            petSelect.innerHTML = '<option value="">Select Pet</option>';
+            
+            if (data.success && data.pets && data.pets.length > 0) {
+                data.pets.forEach(pet => {
+                    const option = document.createElement('option');
+                    option.value = pet._id;
+                    option.textContent = `${pet.name} (${pet.species || 'Unknown'})`;
+                    petSelect.appendChild(option);
+                });
+                petSelect.disabled = false;
+            } else {
+                petSelect.innerHTML = '<option value="">No pets found for this owner</option>';
+                petSelect.disabled = true;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading pets:', error);
+            petSelect.innerHTML = '<option value="">Error loading pets</option>';
+            petSelect.disabled = true;
+        });
+});
+</script>
+
+<%- include('../partials/footer') %>

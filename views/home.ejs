@@ -1,0 +1,597 @@
+<%- include('partials/header', { title: 'Welcome to Petcare' }) %>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Welcome to <span class="text-primary">Petcare</span></h1>
+                        <p class="hero-subtitle">Where Your Beloved Pets Are at the Heart of Everything We Do</p>
+                        <p class="hero-description">
+                            Comprehensive veterinary care with compassion, expertise, and state-of-the-art facilities. 
+                            Your furry, feathered, and scaled family members deserve the very best.
+                        </p>
+                        <div class="hero-buttons">
+                            <a href="/services" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-heart me-2"></i>Explore Our Services
+                            </a>
+                            <a href="/products" class="btn btn-outline-light btn-lg me-3">
+                                <i class="fas fa-shopping-bag me-2"></i>Shop Products
+                            </a>
+                            <a href="/appointments/new" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-calendar-plus me-2"></i>Book Appointment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" 
+                             alt="Happy pets" class="img-fluid rounded-3 shadow-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Welcome Message -->
+<section class="welcome-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="section-title">Hello, <%= currentUser.firstName %>! 👋</h2>
+                <p class="section-subtitle">We're thrilled to have you as part of the Petcare family</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Promise Section -->
+<section class="promise-section py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Our Promise to You & Your Pets</h2>
+                <p class="section-subtitle">Your pets are at the heart of our organization</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="promise-card">
+                    <div class="promise-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h4>Compassionate Care</h4>
+                    <p>Every pet receives individualized attention and love, treating them like our own family members.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="promise-card">
+                    <div class="promise-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h4>Expert Veterinarians</h4>
+                    <p>Our team of experienced professionals provides the highest standard of veterinary medicine.</p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="promise-card">
+                    <div class="promise-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>24/7 Emergency Care</h4>
+                    <p>Round-the-clock emergency services because we know pets don't get sick on a schedule.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pet Gallery Section -->
+<section class="gallery-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Meet Some of Our Happy Patients</h2>
+                <p class="section-subtitle">These adorable faces brighten our days</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Golden Retriever" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Buddy</h5>
+                        <p>Golden Retriever</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Tabby Cat" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Whiskers</h5>
+                        <p>Tabby Cat</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Rabbit" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Cotton</h5>
+                        <p>Holland Lop</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1444212477490-ca407925329e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Parrot" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Charlie</h5>
+                        <p>African Grey</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1583512603805-3cc6b41f3edb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="French Bulldog" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Luna</h5>
+                        <p>French Bulldog</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1574231164645-d6f0e8553590?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Maine Coon" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Milo</h5>
+                        <p>Maine Coon</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Border Collie" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Max</h5>
+                        <p>Border Collie</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                         alt="Orange Cat" class="gallery-image">
+                    <div class="gallery-overlay">
+                        <h5>Ginger</h5>
+                        <p>Orange Tabby</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Preview -->
+<section class="services-preview py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title text-white">Our Comprehensive Services</h2>
+                <p class="section-subtitle">Everything your pet needs under one roof</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="service-preview-card">
+                    <i class="fas fa-stethoscope"></i>
+                    <h5>General Care</h5>
+                    <p>Wellness exams, consultations, and routine health maintenance</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="service-preview-card">
+                    <i class="fas fa-ambulance"></i>
+                    <h5>Emergency Care</h5>
+                    <p>24/7 emergency services for urgent and critical situations</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="service-preview-card">
+                    <i class="fas fa-user-md"></i>
+                    <h5>Surgery</h5>
+                    <p>Advanced surgical procedures with state-of-the-art equipment</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="service-preview-card">
+                    <i class="fas fa-tooth"></i>
+                    <h5>Dental Care</h5>
+                    <p>Professional dental cleaning and oral health services</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a href="/services" class="btn btn-light btn-lg">
+                <i class="fas fa-arrow-right me-2"></i>View All Services
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions -->
+<section class="quick-actions py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">Quick Actions</h2>
+                <p class="section-subtitle">Get started with just one click</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="/products" class="quick-action-card">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h6>Shop Products</h6>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="/appointments/new" class="quick-action-card">
+                    <i class="fas fa-calendar-plus"></i>
+                    <h6>Book Appointment</h6>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="/pets" class="quick-action-card">
+                    <i class="fas fa-paw"></i>
+                    <h6>My Pets</h6>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="/appointments" class="quick-action-card">
+                    <i class="fas fa-clock"></i>
+                    <h6>My Appointments</h6>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="/services" class="quick-action-card">
+                    <i class="fas fa-heart"></i>
+                    <h6>Our Services</h6>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <a href="/owners" class="quick-action-card">
+                    <i class="fas fa-users"></i>
+                    <h6>Pet Owners</h6>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="section-title">What Our Customers Say</h2>
+                <p class="section-subtitle">Real stories from real pet families</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"The staff at Petcare is absolutely amazing! They treated my dog Luna like their own. Professional, caring, and thorough."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" 
+                             alt="Sarah Johnson" class="author-avatar">
+                        <div>
+                            <h6>Sarah Johnson</h6>
+                            <small>Luna's Mom</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Emergency care at 2 AM for our cat - they were there for us. Couldn't be more grateful for their dedication."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" 
+                             alt="Mike Chen" class="author-avatar">
+                        <div>
+                            <h6>Mike Chen</h6>
+                            <small>Whiskers' Dad</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"From routine checkups to complex surgery, Petcare has been our trusted partner in keeping our pets healthy and happy."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" 
+                             alt="Emily Rodriguez" class="author-avatar">
+                        <div>
+                            <h6>Emily Rodriguez</h6>
+                            <small>Multi-Pet Family</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%), 
+                url('https://images.unsplash.com/photo-1601758228041-f3b2795255f1?ixlib=rb-4.0.3') center/cover;
+    color: white;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+    animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+    animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.hero-buttons {
+    animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.hero-image {
+    animation: fadeInRight 1s ease-out 0.8s both;
+}
+
+/* Section Styles */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+/* Promise Cards */
+.promise-card {
+    text-align: center;
+    padding: 2rem;
+    border-radius: 15px;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%;
+}
+
+.promise-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.promise-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    color: white;
+    font-size: 1.8rem;
+}
+
+/* Gallery */
+.gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+}
+
+.gallery-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover .gallery-image {
+    transform: scale(1.1);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    color: white;
+    padding: 2rem 1rem 1rem;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover .gallery-overlay {
+    transform: translateY(0);
+}
+
+/* Service Preview Cards */
+.service-preview-card {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.service-preview-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.2);
+}
+
+.service-preview-card i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+/* Quick Action Cards */
+.quick-action-card {
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    padding: 2rem 1rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s;
+    color: #2c3e50;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    color: #667eea;
+    text-decoration: none;
+}
+
+.quick-action-card i {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #667eea;
+}
+
+/* Testimonial Cards */
+.testimonial-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-content {
+    flex: 1;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    color: #555;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+    
+    .promise-card, .service-preview-card {
+        padding: 1.5rem 1rem;
+    }
+    
+    .hero-buttons .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .gallery-image {
+        height: 200px;
+    }
+}
+</style>
+
+<%- include('partials/footer') %>
